@@ -4,7 +4,7 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.tsx',
+  entry: ['regenerator-runtime/runtime.js', './src/index.tsx'],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -13,8 +13,22 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'awesome-typescript-loader',
         exclude: /node_modules/,
+        use: [
+          {
+            loader: 'awesome-typescript-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                {
+                  targets: { chrome: '55' },
+                },
+                '@babel/preset-typescript',
+                '@babel/preset-react',
+              ],
+            },
+          },
+        ],
       },
     ],
   },
