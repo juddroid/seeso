@@ -1,9 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.tsx',
+  entry: ['regenerator-runtime/runtime.js', './src/index.tsx'],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -12,12 +13,22 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'awesome-typescript-loader',
         exclude: /node_modules/,
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          {
+            loader: 'awesome-typescript-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                {
+                  targets: { chrome: '55' },
+                },
+                '@babel/preset-typescript',
+                '@babel/preset-react',
+              ],
+            },
+          },
+        ],
       },
     ],
   },
@@ -27,6 +38,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'public/index.html',
+    }),
+    new Dotenv({
+      path: path.resolve(__dirname, '.env'),
     }),
   ],
 };
